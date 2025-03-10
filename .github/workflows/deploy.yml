@@ -1,0 +1,26 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # Adjust if you use a different branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}         # Your EC2's Elastic IP or hostname
+          username: ubuntu                      # Default username for Ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}       # Private key for SSH access
+          script: |
+            cd /home/ubuntu/YOUR_PROJECT        # Adjust to where your project is located on EC2
+            git pull origin main                # Pull the latest changes from GitHub
+            docker-compose down                # Stop the running containers
+            docker-compose up -d --build       # Rebuild and restart containers
