@@ -1,0 +1,22 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.9  # Use an image for your project stack
+    steps:
+      - checkout  # Checkout the code from GitHub
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt  # Replace with the installation steps for your stack
+      - run:
+          name: Run tests
+          command: |
+            python manage.py test  # Replace with your test command if using Django
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
