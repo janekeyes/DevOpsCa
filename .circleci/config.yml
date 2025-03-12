@@ -3,20 +3,41 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.9  # Use an image for your project stack
+      - image: circleci/python:3.8  # Or your preferred Docker image
     steps:
-      - checkout  # Checkout the code from GitHub
+      - checkout  # Check out the code from GitHub
       - run:
           name: Install dependencies
           command: |
-            pip install -r requirements.txt  # Replace with the installation steps for your stack
+            pip install -r requirements.txt  # Or any dependencies your app needs
       - run:
           name: Run tests
           command: |
-            python manage.py test  # Replace with your test command if using Django
+            pytest  # Or another test framework depending on your app
+
+  deploy:
+    docker:
+      - image: circleci/python:3.8  # Or the Docker image you used in build
+    steps:
+      - checkout  # Check out the code from GitHub
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt  # Install dependencies for deployment
+      - run:
+          name: Deploy to EC2
+          command: |
+            ssh -o StrictHostKeyChecking=no -i /path/to/your/key.pem ubuntu@your-ec2-ip "cd /path/to/your/app && git pull && sudo systemctl restart your-service"
+      - run:
+          name: Verify Deployment
+          command: |
+            curl http://your-ec2-ip  # Verify if app is live on the EC2
 
 workflows:
   version: 2
-  build:
+  build_deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
