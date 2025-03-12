@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            echo "$EC2_PRIVATE_KEY" > /tmp/CA-KEY.pem
+            echo "$SSH_KEY" > /tmp/CA-KEY.pem
             chmod 600 /tmp/CA-KEY.pem
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
               cd /home/ubuntu/my-app && 
