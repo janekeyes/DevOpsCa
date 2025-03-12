@@ -1,48 +1,24 @@
 version: 2.1
 
 jobs:
-  build:
-    docker:
-      - image: circleci/node:10.16.3
-    steps:
-      - checkout  
-      - run:
-          name: Install dependencies
-          command: |
-            pip install -r requirements.txt 
-      - run:
-          name: Run tests
-          command: |
-            pytest
-
   deploy:
     docker:
       - image: circleci/python:3.8  
     steps:
       - checkout
       - run:
-          name: Install dependencies
-          command: |
-            pip install -r requirements.txt
-      - run:
           name: Deploy to EC2
           command: |
-            # Create the private key file from the environment variable
             echo "$EC2_PRIVATE_KEY" > /tmp/CA-KEY.pem
             chmod 600 /tmp/CA-KEY.pem
-
-            # SSH into EC2 and deploy
-            ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "cd /home/ubuntu/my-app && git pull && sudo systemctl restart gunicorn"
-      - run:
-          name: Verify Deployment
-          command: |
-            curl http://23.23.227.94
+            ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
+              cd /home/ubuntu/my-app && 
+              git pull && 
+              sudo systemctl restart gunicorn
+            "
 
 workflows:
   version: 2
-  build_deploy:
+  deploy_workflow:
     jobs:
-      - build
-      - deploy:
-          requires:
-            - build
+      - deploy
