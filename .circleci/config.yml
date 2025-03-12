@@ -3,35 +3,40 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.8  # Or your preferred Docker image
+      - image: circleci/node:10.16.3
     steps:
-      - checkout  # Check out the code from GitHub
+      - checkout  
       - run:
           name: Install dependencies
           command: |
-            pip install -r requirements.txt  # Or any dependencies your app needs
+            pip install -r requirements.txt 
       - run:
           name: Run tests
           command: |
-            pytest  # Or another test framework depending on your app
+            pytest
 
   deploy:
     docker:
-      - image: circleci/python:3.8  # Or the Docker image you used in build
+      - image: circleci/python:3.8  
     steps:
-      - checkout  # Check out the code from GitHub
+      - checkout
       - run:
           name: Install dependencies
           command: |
-            pip install -r requirements.txt  # Install dependencies for deployment
+            pip install -r requirements.txt
       - run:
           name: Deploy to EC2
           command: |
-            ssh -o StrictHostKeyChecking=no -i /path/to/your/key.pem ubuntu@your-ec2-ip "cd /path/to/your/app && git pull && sudo systemctl restart your-service"
+            # Create the private key file from the environment variable
+            echo "$EC2_PRIVATE_KEY" > /tmp/CA-KEY.pem
+            chmod 600 /tmp/CA-KEY.pem
+
+            # SSH into EC2 and deploy
+            ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "cd /home/ubuntu/my-app && git pull && sudo systemctl restart gunicorn"
       - run:
           name: Verify Deployment
           command: |
-            curl http://your-ec2-ip  # Verify if app is live on the EC2
+            curl http://23.23.227.94
 
 workflows:
   version: 2
