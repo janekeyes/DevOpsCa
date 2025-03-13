@@ -1,48 +1,33 @@
-version: 2.1
-
 jobs:
-  #test:
-   # docker:
-   #   - image: circleci/python:3.8
-  #  steps:
-   #   - checkout
-      #- run:
-          #name: Install Dependencies
-          #command: |
-    #        #pip install -r requirements.txt
-    #  - run:
-    #      name: Run Tests
-    #      command: python -m unittest discover -s tests
-
   deploy:
     docker:
       - image: circleci/python:3.8
     steps:
       - checkout
       - run:
+          name: Debug SSH Key (Check if it's set)
+          command: echo "$SSH_KEY" | head -n 5
+      - run:
           name: Write Private Key
           command: |
             echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem
             chmod 600 /tmp/CA-KEY.pem
       - run:
+          name: Verify Key Existence
+          command: ls -la /tmp/CA-KEY.pem
+      - run:
+          name: Debug SSH Key (Check saved file)
+          command: cat /tmp/CA-KEY.pem
+      - run:
           name: Deploy to EC2
           command: |
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
               cd /home/ubuntu/my-app && 
-              git pull &&
-              sudo systemctl restart myapp.service &&  
-              sudo systemctl status myapp.service 
+              git pull
             "
-      - run:
-          name: Verify Public URL
-          command: |
-            curl -I http://23.23.227.94
 
 workflows:
   version: 2
   deploy_workflow:
     jobs:
-      #- test 
-      - deploy #:
-         # requires:
-            #- test  
+      - deploy
