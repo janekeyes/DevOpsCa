@@ -10,7 +10,7 @@ sudo npm install -g pm2
 pm2 stop simple_app
 
 # Install application dependencies
-npm install
+npm install || true
 
 # Store private key and server certificate
 echo "$PRIVATE_KEY" > privatekey.pem
