@@ -9,14 +9,11 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            # Create the private key file
             echo "$SSH_KEY" > /tmp/CA-KEY.pem
             chmod 600 /tmp/CA-KEY.pem  # Ensure it's private
 
-            # Verify the key is correctly formatted (optional)
             cat /tmp/CA-KEY.pem
 
-            # SSH into EC2 and deploy
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
               cd /home/ubuntu/my-app && 
               git pull && 
