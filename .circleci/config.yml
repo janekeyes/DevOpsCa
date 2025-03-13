@@ -2,40 +2,34 @@ version: 2
 jobs:
   deploy:
     docker:
-      - image: circleci/python:3.8  # You can use a basic image, but consider changing this to a Node.js image if needed.
+      - image: circleci/python:3.8
     steps:
-      - checkout  # Check out your code
+      - checkout
       - run:
           name: Debug SSH Key (Check if it's set)
-          command: echo "$SSH_KEY" | head -n 5  # Check if the SSH key is properly set in CircleCI
+          command: echo "$SSH_KEY" | head -n 5
       - run:
           name: Write Private Key
           command: |
-            echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem  # Write the SSH key to a file
-            chmod 600 /tmp/CA-KEY.pem  # Set the appropriate permissions for the key
+            echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem
+            chmod 600 /tmp/CA-KEY.pem
       - run:
           name: Verify Key Existence
-          command: ls -la /tmp/CA-KEY.pem  # Verify the SSH key file exists
+          command: ls -la /tmp/CA-KEY.pem
       - run:
           name: Debug SSH Key (Check saved file)
-          command: cat /tmp/CA-KEY.pem  # Check the contents of the SSH key file
+          command: cat /tmp/CA-KEY.pem
       - run:
           name: Deploy to EC2
           command: |
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
-            # Navigate to the app directory and pull the latest changes
-            cd /home/ubuntu/my-app &&
-            git pull &&
-            # Install Node.js dependencies
-            npm install &&
-            # Restart the application
-            npm start
+            cd /home/ubuntu/my-app && 
+            git pull
             "
       - run:
           name: Verify Application is Running
           command: |
-            # Verify that the app is running on the expected URL
-            curl http://23.23.227.94:3000  # Adjust the port if needed
+            curl http://23.23.227.94:3000
 
 workflows:
   version: 2
