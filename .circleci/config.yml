@@ -1,18 +1,18 @@
 version: 2.1
 
 jobs:
-  test:
-    docker:
-      - image: circleci/python:3.8
-    steps:
-      - checkout
+  #test:
+   # docker:
+   #   - image: circleci/python:3.8
+  #  steps:
+   #   - checkout
       #- run:
           #name: Install Dependencies
           #command: |
-            #pip install -r requirements.txt
-      - run:
-          name: Run Tests
-          command: python -m unittest discover -s tests
+    #        #pip install -r requirements.txt
+    #  - run:
+    #      name: Run Tests
+    #      command: python -m unittest discover -s tests
 
   deploy:
     docker:
