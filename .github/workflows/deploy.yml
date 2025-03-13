@@ -22,4 +22,3 @@ jobs:
           script: |
             cd /home/ubuntu/my-app        
             git pull origin main           
-            sudo systemctl restart gunicorn  
