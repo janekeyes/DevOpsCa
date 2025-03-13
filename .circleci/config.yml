@@ -66,13 +66,8 @@ jobs:
           name: Deploy to EC2
           command: |
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
-              cd /home/ubuntu/my-app &&
-              git pull &&
-              curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&
-              sudo apt-get install -y nodejs &&
-              npm install &&
-              # Start the application
-              npm start
+            cd /home/ubuntu/my-app && 
+            git pull
             "
       - run:
           name: Verify Application is Running
