@@ -1,7 +1,26 @@
+version: 2
 jobs:
+  # Continuous Integration (CI) job - run tests
+  test:
+    docker:
+      - image: circleci/python:3.8  # Change to node image if testing with node
+    steps:
+      - checkout
+      - run:
+          name: Install Node.js dependencies
+          command: |
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            npm install
+      - run:
+          name: Run tests
+          command: |
+            npm test  # Ensure you have the necessary test setup for your Node app
+
+  # Continuous Deployment (CD) job - deploy to EC2
   deploy:
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.8  # Change to node image if preferred
     steps:
       - checkout
       - run:
@@ -22,12 +41,25 @@ jobs:
           name: Deploy to EC2
           command: |
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
-              cd /home/ubuntu/my-app && 
-              git pull
+              cd /home/ubuntu/my-app &&
+              git pull &&
+              # Install Node.js dependencies
+              curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&
+              sudo apt-get install -y nodejs &&
+              npm install &&
+              # Start the application (assuming you use npm start or pm2)
+              npm start
             "
+      - run:
+          name: Verify Application is Running
+          command: |
+            curl http://23.23.227.94:3000  # Replace with your Node.js app's port
 
 workflows:
   version: 2
   deploy_workflow:
     jobs:
-      - deploy
+      - test
+      - deploy:
+          requires:
+            - test
