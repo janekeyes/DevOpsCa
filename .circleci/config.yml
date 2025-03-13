@@ -6,10 +6,10 @@ jobs:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - run:
-          name: Install Dependencies
-          command: |
-            pip install -r requirements.txt
+      #- run:
+          #name: Install Dependencies
+          #command: |
+            #pip install -r requirements.txt
       - run:
           name: Run Tests
           command: python -m unittest discover -s tests
