@@ -8,7 +8,18 @@ jobs:
       - checkout
       - run:
           name: Debug SSH Key
+          command: echo "$SSH_KEY" | head -n 5
+      - run:
+          name: Debug SSH Key
           command: cat /tmp/CA-KEY.pem
+      - run:
+          name: Write Private Key
+          command: |
+            echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem
+            chmod 600 /tmp/CA-KEY.pem
+      - run:
+          name: Verify Key Existence
+          command: ls -la /tmp/CA-KEY.pem
       - run:
           name: Deploy to EC2
           command: |
