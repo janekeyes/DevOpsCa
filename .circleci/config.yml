@@ -42,8 +42,8 @@ jobs:
       - run:
           name: deploy-application
           command: ssh -o StrictHostKeyChecking=no $EC2_USER@$AWS_EC2_PUBLIC_DNS "
-            export SERVER='${SERVER}';
-            export PRIVATE_KEY='${PRIVATE_KEY}';
-            git clone https://github.com/janekeyes/DevOpsCa.git;
+            export SERVER='$SERVER';
+            export PRIVATE_KEY='$PRIVATE_KEY';
             cd DevOpsCa/;
+            git clone https://github.com/janekeyes/DevOpsCa.git;
             chmod +x deploy.sh && ./deploy.sh"
