@@ -46,4 +46,4 @@ jobs:
             export PRIVATE_KEY='$PRIVATE_KEY';
             rm -rf DevOpsCa/;
             git clone https://github.com/janekeyes/DevOpsCa.git;
-            chmod +x deploy.sh && ./deploy.sh"
+            chmod +x deploy.sh && .DevOpsCa/deploy.sh"
