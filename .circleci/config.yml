@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Debug SSH Key
+          command: cat /tmp/CA-KEY.pem
+      - run:
           name: Deploy to EC2
           command: |
             echo "$SSH_KEY" > /tmp/CA-KEY.pem
