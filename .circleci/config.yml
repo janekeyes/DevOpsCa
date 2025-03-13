@@ -1,82 +1,44 @@
-# version: 2
-# jobs:
-#   deploy:
-#     docker:
-#       - image: circleci/python:3.8  
-#     steps:
-#       - checkout
-#       - run:
-#           name: Debug SSH Key (Check if it's set)
-#           command: echo "$SSH_KEY" | head -n 5
-#       - run:
-#           name: Write Private Key
-#           command: |
-#             echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem
-#             chmod 600 /tmp/CA-KEY.pem
-#       - run:
-#           name: Verify Key Existence
-#           command: ls -la /tmp/CA-KEY.pem
-#       - run:
-#           name: Debug SSH Key (Check saved file)
-#           command: cat /tmp/CA-KEY.pem
-#       - run:
-#           name: Deploy to EC2
-#           command: |
-#             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
-#               cd /home/ubuntu/my-app &&
-#               git pull &&
-#               curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&
-#               sudo apt-get install -y nodejs &&
-#               npm install &&
-#               # Start the application
-#               npm start
-#             "
-#       - run:
-#           name: Verify Application is Running
-#           command: |
-#             curl http://23.23.227.94:3000  
-
-# workflows:
-#   version: 2
-#   deploy_workflow:
-#     jobs:
-#       - deploy
 version: 2
 jobs:
   deploy:
     docker:
-      - image: circleci/python:3.8  
+      - image: circleci/python:3.8  # You can use a basic image, but consider changing this to a Node.js image if needed.
     steps:
-      - checkout
+      - checkout  # Check out your code
       - run:
           name: Debug SSH Key (Check if it's set)
-          command: echo "$SSH_KEY" | head -n 5
+          command: echo "$SSH_KEY" | head -n 5  # Check if the SSH key is properly set in CircleCI
       - run:
           name: Write Private Key
           command: |
-            echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem
-            chmod 600 /tmp/CA-KEY.pem
+            echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem  # Write the SSH key to a file
+            chmod 600 /tmp/CA-KEY.pem  # Set the appropriate permissions for the key
       - run:
           name: Verify Key Existence
-          command: ls -la /tmp/CA-KEY.pem
+          command: ls -la /tmp/CA-KEY.pem  # Verify the SSH key file exists
       - run:
           name: Debug SSH Key (Check saved file)
-          command: cat /tmp/CA-KEY.pem
+          command: cat /tmp/CA-KEY.pem  # Check the contents of the SSH key file
       - run:
           name: Deploy to EC2
           command: |
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
-            cd /home/ubuntu/my-app && 
-            git pull
+            # Navigate to the app directory and pull the latest changes
+            cd /home/ubuntu/my-app &&
+            git pull &&
+            # Install Node.js dependencies
+            npm install &&
+            # Restart the application
+            npm start
             "
       - run:
           name: Verify Application is Running
           command: |
-            curl http://23.23.227.94:3000  
+            # Verify that the app is running on the expected URL
+            curl http://23.23.227.94:3000  # Adjust the port if needed
 
 workflows:
   version: 2
   deploy_workflow:
     jobs:
       - deploy
-
