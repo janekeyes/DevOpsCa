@@ -1,3 +1,46 @@
+# version: 2
+# jobs:
+#   deploy:
+#     docker:
+#       - image: circleci/python:3.8  
+#     steps:
+#       - checkout
+#       - run:
+#           name: Debug SSH Key (Check if it's set)
+#           command: echo "$SSH_KEY" | head -n 5
+#       - run:
+#           name: Write Private Key
+#           command: |
+#             echo "$SSH_KEY" | sed 's/\\n/\n/g' > /tmp/CA-KEY.pem
+#             chmod 600 /tmp/CA-KEY.pem
+#       - run:
+#           name: Verify Key Existence
+#           command: ls -la /tmp/CA-KEY.pem
+#       - run:
+#           name: Debug SSH Key (Check saved file)
+#           command: cat /tmp/CA-KEY.pem
+#       - run:
+#           name: Deploy to EC2
+#           command: |
+#             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
+#               cd /home/ubuntu/my-app &&
+#               git pull &&
+#               curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&
+#               sudo apt-get install -y nodejs &&
+#               npm install &&
+#               # Start the application
+#               npm start
+#             "
+#       - run:
+#           name: Verify Application is Running
+#           command: |
+#             curl http://23.23.227.94:3000  
+
+# workflows:
+#   version: 2
+#   deploy_workflow:
+#     jobs:
+#       - deploy
 version: 2
 jobs:
   deploy:
@@ -41,3 +84,4 @@ workflows:
   deploy_workflow:
     jobs:
       - deploy
+
