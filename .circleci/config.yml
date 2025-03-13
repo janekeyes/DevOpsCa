@@ -7,11 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Debug SSH Key
+          name: Debug SSH Key (Check if it's set)
           command: echo "$SSH_KEY" | head -n 5
-      - run:
-          name: Debug SSH Key
-          command: cat /tmp/CA-KEY.pem
       - run:
           name: Write Private Key
           command: |
@@ -21,13 +18,11 @@ jobs:
           name: Verify Key Existence
           command: ls -la /tmp/CA-KEY.pem
       - run:
+          name: Debug SSH Key (Check saved file)
+          command: cat /tmp/CA-KEY.pem
+      - run:
           name: Deploy to EC2
           command: |
-            echo "$SSH_KEY" > /tmp/CA-KEY.pem
-            chmod 600 /tmp/CA-KEY.pem  # Ensure it's private
-
-            cat /tmp/CA-KEY.pem
-
             ssh -o StrictHostKeyChecking=no -i /tmp/CA-KEY.pem ubuntu@23.23.227.94 "
               cd /home/ubuntu/my-app && 
               git pull && 
